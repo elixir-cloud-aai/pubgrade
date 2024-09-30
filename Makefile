@@ -14,8 +14,7 @@ help: ## This help.
 
 build: ## Builds two container images (main-service, build-complete-updater).
 	docker build -t $(IMAGE_NAME_PUBGRADE) .
-# uncomment after build-complete-upater-merge
-# 	docker build -f build-complete-updater/Dockerfile -t $(IMAGE_NAME_UPDATER) .
+	docker build -f build-complete-updater/Dockerfile -t $(IMAGE_NAME_UPDATER) .
 
 test: ## Runs unit tests and shows coverage.
 	coverage run --source pubgrade -m pytest
