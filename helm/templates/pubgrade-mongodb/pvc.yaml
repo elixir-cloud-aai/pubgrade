@@ -1,5 +1,5 @@
-{{ if .Values.volumes.mongodb.storage_active }}
-{{ if .Values.volumes.mongodb.deployLocalPv }}
+{{ if .Values.pubgrade_mongodb.volume.storageActive }}
+{{ if .Values.pubgrade_mongodb.volume.deployLocalPv }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -7,24 +7,24 @@ metadata:
  labels:
    type: local
 spec:
- storageClassName: {{ .Values.volumes.mongodb.storageClass }}
+ storageClassName: {{ .Values.pubgrade_mongodb.volume.storageClass }}
  capacity:
-   storage: {{ .Values.volumes.mongodb.size }}
+   storage: {{ .Values.pubgrade_mongodb.volume.size }}
  accessModes:
    - ReadWriteOnce
  hostPath:
-   path: {{ .Values.volumes.mongodb.pathToLocalDir }}
+   path: {{ .Values.pubgrade_mongodb.volume.pathToLocalDir }}
 {{ end }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
- name: {{ .Values.volumes.mongodb.name }}
+ name: {{ .Values.pubgrade_mongodb.volume.claimName }}
 spec:
- storageClassName: {{ .Values.volumes.mongodb.storageClass }}
+ storageClassName: {{ .Values.pubgrade_mongodb.volume.storageClass }}
  accessModes:
    - ReadWriteOnce
  resources:
    requests:
-     storage: {{ .Values.volumes.mongodb.size }}
+     storage: {{ .Values.pubgrade_mongodb.volume.size }}
 {{ end }}

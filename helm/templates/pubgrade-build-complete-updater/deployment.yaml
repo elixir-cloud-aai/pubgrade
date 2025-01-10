@@ -3,23 +3,23 @@ kind: Deployment
 metadata:
   name: build-complete-updater
 spec:
- replicas: 1
+ replicas: {{ .Values.pubgrade_build_complete_updater.replicaCount }}
  selector:
    matchLabels:
-     app: pubgrade
+     app: {{ .Values.appName }}
  template:
    metadata:
      labels:
-       app: pubgrade
+       app: {{ .Values.appName }}
    spec:
-          serviceAccountName: pubgrade
+          serviceAccountName: {{ .Values.pubgrade_webserver.serviceAccountName }}
           automountServiceAccountToken: true
           containers:
-          - image: {{ .Values.imageNotifyCompletion }}
-            name: notify-completion
-            imagePullPolicy: IfNotPresent
+          - image: {{ .Values.pubgrade_build_complete_updater.image }}
+            name: pubgrade-build-complete-updater
+            imagePullPolicy: {{ .Values.pubgrade_build_complete_updater.imagePullPolicy }}
             env:
               - name: NAMESPACE
                 value: {{ .Release.Namespace }}
               - name: BROKER_URL
-                value: {{ .Values.pubgrade_URL }}
+                value: {{ .Values.pubgrade_url }}

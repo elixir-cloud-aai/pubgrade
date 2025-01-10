@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: pubgrade-service
 spec:
-  type: NodePort
+  type: {{ .Values.pubgrade_webserver.portType }}
   selector:
-    app: pubgrade
+    app: {{ .Values.appName }}
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: {{ .Values.pubgrade_webserver.port }}
+      targetPort: {{ .Values.pubgrade_webserver.port }}
       nodePort: 30008
