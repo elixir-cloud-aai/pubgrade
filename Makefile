@@ -1,4 +1,4 @@
-IMAGE_NAME_PUBGRADE=akash7778/pubgrade
+IMAGE_NAME_PUBGRADE=akash7778/pubgrade:test_build_1
 IMAGE_NAME_UPDATER=akash7778/pubgrade-updater
 APP_NAME=pubgrade
 
@@ -21,9 +21,7 @@ test: ## Runs unit tests and shows coverage.
 	coverage report -m
 
 install-pubgrade: # build ## Install pubgrade on cluster using helm.
-	kubectl create namespace $(APP_NAME) --dry-run=client -o yaml | kubectl apply -f -
-	sed -i 's#akash7778/pubgrade:test_build#$(IMAGE_NAME_PUBGRADE)#g' deployment/values.yaml
-	sed -i 's#akash7778/notify-completion#$(IMAGE_NAME_UPDATER)#g' deployment/values.yaml
+#	kubectl create namespace $(APP_NAME) --dry-run=client -o yaml | kubectl apply -f -
 	helm upgrade --install $(APP_NAME) deployment/ -n $(APP_NAME)
 
 uninstall-pubgrade: ## Uninstall pubgrade.
