@@ -1,33 +1,60 @@
-imageNotifyCompletion: 'akash7778/notify-completion' # This will be moved to elixir-cloud-aai
-pubgrade_URL: "https://pubgrade.dyn.cloud.e-infra.cz"
+appName: pubgrade
+pubgrade_url: "https://pubgrade.dyn.cloud.e-infra.cz"
 
-ingress:
-  enabled: true
-  url: 'your.url.without.http.com'
-  https:
-    enabled: true
-    issuer: letsencrypt-prod
-  
-Pubgrade:
-  image: akash7778/pubgrade:test_build_1
+pubgrade_build_complete_updater:
+  replicaCount: 1
+  image: "akash7778/pubgrade-updater"  # This will be moved to elixir-cloud-aai
+  imagePullPolicy: IfNotPresent
 
-#Persistent volumes and claims
-volumes:
-  Pubgrade:
+
+
+pubgrade_mongodb:
+  image: mongo:3.6
+  name: mongodb
+  replicaCount: 1
+  port: 27017
+  portType: NodePort
+  volume:
     # In case you are working with minikube or another single-worker solution
     # you can add a peristent volume from a local directory. For fully-distributed
-    #clusters you should use a StorageClass already existing in your cluster, so set this to false.
+    # clusters you should use a StorageClass already existing in your cluster, so set this to false.
+    deployLocalPv: false
+    name: mongodb-storage
+    claimName: mongo-pvc
+    storageActive: true
+    storageClass: nfs-csi
+    size: 2Gi
+    pathToLocalDir: /tmp/mongo-pv
+  securityContext:
+    runAsUser: 1004510000
+
+
+pubgrade_webserver:
+  serviceAccountName: pubgrade
+  replicaCount: 3
+  imagePullPolicy: IfNotPresent
+  image: akash7778/pubgrade:test_build_1  # This will be moved to elixir-cloud-aai
+  port: 8080
+  portType: NodePort
+
+  volume:
+    # In case you are working with minikube or another single-worker solution
+    # you can add a peristent volume from a local directory. For fully-distributed
+    # clusters you should use a StorageClass already existing in your cluster, so set this to false.
     deployLocalPv: false
     pathToMountedDir: /pubgrade_temp_files
     pathToLocalDir: /tmp/pubgrade-pv
-    name: pubgrade-pvc
-    storageClass: manual
+    pvcName: pubgrade-pvc
+    storageClass: nfs-csi
     size: 2Gi
-    storage_active: false
-  mongodb:
-    deployLocalPv: false
-    pathToLocalDir: /tmp/mongo-pv
-    name: mongo-pvc
-    storageClass: manual
-    size: 2Gi
-    storage_active: false
+    storage_active: true
+
+  ingress:
+    enabled: true
+    url: 'your.url.without.http.com'
+    https:
+      enabled: true
+      issuer: letsencrypt-prod
+
+  securityContext:
+    runAsUser: 1004510000

@@ -1,5 +1,5 @@
-{{ if .Values.volumes.Pubgrade.storage_active }}
-{{ if .Values.volumes.Pubgrade.deployLocalPv }}
+{{ if .Values.pubgrade_webserver.volume.storage_active }}
+{{ if .Values.pubgrade_webserver.volume.deployLocalPv }}
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -7,57 +7,24 @@ metadata:
  labels:
    type: local
 spec:
- storageClassName: {{ .Values.volumes.Pubgrade.storageClass }}
+ storageClassName: {{ .Values.pubgrade_webserver.volume.storageClass }}
  capacity:
-   storage: {{ .Values.volumes.Pubgrade.size }}
+   storage: {{ .Values.pubgrade_webserver.volume.size }}
  accessModes:
-   - ReadWriteOnce
+   - ReadWriteMany
  hostPath:
-   path: {{ .Values.volumes.Pubgrade.pathToLocalDir }}
+   path: {{ .Values.pubgrade_webserver.volume.pathToLocalDir }}
 {{ end }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
- name: {{ .Values.volumes.Pubgrade.name }}
+ name: {{ .Values.pubgrade_webserver.volume.pvcName }}
 spec:
- storageClassName: {{ .Values.volumes.Pubgrade.storageClass }}
+ storageClassName: {{ .Values.pubgrade_webserver.volume.storageClass }}
  accessModes:
-   - ReadWriteOnce
+   - ReadWriteMany
  resources:
    requests:
-     storage: {{ .Values.volumes.Pubgrade.size }}
----
-apiVersion: v1
-items:
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    finalizers:
-    - kubernetes.io/pvc-protection
-    name: mongo-pvc
-  spec:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 2Gi
-    storageClassName: standard-rwo
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    finalizers:
-    - kubernetes.io/pvc-protection
-    name: pubgrade-pvc
-  spec:
-    accessModes:
-    - ReadWriteOnce
-    resources:
-      requests:
-        storage: 2Gi
-    storageClassName: standard-rwo
-kind: List
-metadata:
-  resourceVersion: ""
-  selfLink: ""
+     storage: {{ .Values.pubgrade_webserver.volume.size }}
 {{ end }}
