@@ -24,7 +24,6 @@ from pubgrade.errors.exceptions import (
 )
 from pubgrade.modules.endpoints.repositories import generate_id
 from pubgrade.modules.endpoints.subscriptions import notify_subscriptions
-from pubgrade.secrets import gh_access_token, cosign_password, cosign_private_key
 
 logger = logging.getLogger(__name__)
 
@@ -405,7 +404,6 @@ def create_dockerhub_config_file(
         it contains dockerhub access token.
     """
     intermediate_registry_format = current_app.config["FOCA"].endpoints["builds"]["intermediate_registery_format"]
-    intermediate_registry_token = current_app.config["FOCA"].endpoints["builds"]["intermediate_registry_token"]
     template_config_file = (
             """{
 "auths": {
@@ -414,7 +412,8 @@ def create_dockerhub_config_file(
         }
     }
 }"""
-                           ) % (intermediate_registry_format.split("/", 1)[0],  intermediate_registry_token )
+                           ) % (intermediate_registry_format.split("/", 1)[0],
+                                os.getenv("INTERMEDIATE_REGISTRY_TOKEN") )
     f = open(config_file_location, "w")
     f.write(template_config_file)
     f.close()
@@ -505,9 +504,7 @@ def build_completed(
         intermediate_registry_format = current_app.config["FOCA"].endpoints["builds"]["intermediate_registery_format"]
         trigger_signing_image(
             image_path=data["images"][0]["name"],
-            cosign_private_key=cosign_private_key,
             dockerhub_token=data["dockerhub_token"],
-            cosign_password=cosign_password,
             pull_tag=intermediate_registry_format.format(data["images"][0]["name"].split("/")[1].split(":")[0]),
             push_tag=data["images"][0]["name"]
         )
@@ -569,7 +566,7 @@ def delete_pod(name: str, namespace: str):
         raise DeletePodError
 
 
-def trigger_signing_image(cosign_private_key: str, cosign_password: str, dockerhub_token: str,
+def trigger_signing_image(dockerhub_token: str,
                           image_path: str, pull_tag: str, push_tag: str):
     username, password = base64.b64decode(dockerhub_token).decode('utf-8').split(":")
     url = "https://api.github.com/repos/{}/dispatches".format(
@@ -577,10 +574,10 @@ def trigger_signing_image(cosign_private_key: str, cosign_password: str, dockerh
     payload = json.dumps({
         "event_type": "sign-image",
         "client_payload": {
-            "cosign_key": cosign_private_key,
+            "cosign_key": os.getenv("COSIGN_PRIVATE_KEY"),
             "docker_username": username,
             "docker_password": password,
-            "cosign_password": cosign_password,
+            "cosign_password": os.getenv("COSIGN_PASSWORD"),
             "image_path": image_path,
             "pull_tag": pull_tag,
             "push_tag": push_tag,
@@ -589,7 +586,7 @@ def trigger_signing_image(cosign_private_key: str, cosign_password: str, dockerh
     })
     headers = {
         'Accept': 'application/vnd.github+json',
-        'Authorization': 'Bearer {}'.format(gh_access_token),
+        'Authorization': 'Bearer {}'.format(os.getenv("GH_ACCESS_TOKEN")),
         'X-GitHub-Api-Version': '2022-11-28',
         'Content-Type': 'application/json'
     }
