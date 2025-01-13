@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 subjects:
 - kind: ServiceAccount
-  name: pubgrade
+  name: {{ .Values.pubgrade_webserver.serviceAccountName }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role

@@ -1,31 +1,31 @@
-{{- if  .Values.ingress.enabled }}
+{{- if  .Values.pubgrade_webserver.ingress.enabled }}
 {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1/Ingress" }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
-    {{- if .Values.ingress.https.enabled }}
-    cert-manager.io/cluster-issuer: {{ .Values.ingress.https.issuer }}
-    kubernetes.io/tls-acme: {{ quote .Values.ingress.https.enabled}}
+    {{- if .Values.pubgrade_webserver.ingress.https.enabled }}
+    cert-manager.io/cluster-issuer: {{ .Values.pubgrade_webserver.ingress.https.issuer }}
+    kubernetes.io/tls-acme: {{ quote .Values.pubgrade_webserver.ingress.https.enabled}}
     {{- end }}
   name: pubgrade-ingress
 spec:
   rules:
-  - host: {{ .Values.ingress.url }}
+  - host: {{ .Values.pubgrade_webserver.ingress.url }}
     http:
       paths:
       - backend:
           service:
             name: pubgrade-service
             port:
-              number: 8080
+              number:  {{ .Values.pubgrade_webserver.port }}
         path: /
         pathType: Prefix
-  {{- if .Values.ingress.https.enabled }}
+  {{- if .Values.pubgrade_webserver.ingress.https.enabled }}
   tls:
   - hosts:
-    - {{ .Values.ingress.url }}
+    - {{ .Values.pubgrade_webserver.ingress.url }}
     secretName: pubgrade-ingress-secret
   {{- end }}
 {{- else if .Capabilities.APIVersions.Has "route.openshift.io/v1/Route" -}}
@@ -34,7 +34,7 @@ kind: Route
 metadata:
   name: pubgrade-ingress
 spec:
-  host: {{ .Values.ingress.url }}
+  host: {{ .Values.pubgrade_webserver.ingress.url }}
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
