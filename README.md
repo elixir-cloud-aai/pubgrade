@@ -25,9 +25,10 @@ Currently supported features:
 
 1. Install and setup [kubernetes][kubernetes-install].
 2. Install [Helm][helm-install].
-3. Modify deployment/values.yaml.
+3. Modify `helm/values.yaml`.
 4. Create a namespace. `kubectl create namespace pubgrade`
-5. Create deployment using helm. `helm install pubgrade deployment/ -n pubgrade`
+5. Create your own secrets.yaml or Import GPG key and decrypt secrets.yaml `gpg --import <gpg key path> && sops --decrypt helm/templates/pubgrade-webserver/secrets.yaml > helm/templates/pubgrade-webserver/secrets.yaml`.
+6. Create deployment using helm. `helm install pubgrade deployment/ -n pubgrade` or `make install-pubgrade`
 
 ## Usage
 
