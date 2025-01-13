@@ -23,7 +23,7 @@ jobs:
           dockerfile: .
           image-name: "pubgrade"
           tags: "latest ${{ env.TAG }}"
-          push-branches: "${{ github.event.repository.default_branch }}"
+          push-branches: "github_actions {{ github.event.repository.default_branch }}$"
         env:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_LOGIN }}
           REGISTRY_TOKEN: "${{ secrets.DOCKERHUB_TOKEN }}"
