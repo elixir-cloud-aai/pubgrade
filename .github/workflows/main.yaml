@@ -29,6 +29,7 @@ jobs:
           REGISTRY_TOKEN: "${{ secrets.DOCKERHUB_TOKEN }}"
           DOCKER_ORGANIZATION: ${{ secrets.DOCKERHUB_ORG }}
           GITHUB_ORGANIZATION: ${{ github.repository_owner }}
+          PUSH_ON_GIT_TAG: true
       - name: Verify that image was pushed
         run: |
           echo "Push indicator: ${{ steps.docker.outputs.push-indicator }}"
