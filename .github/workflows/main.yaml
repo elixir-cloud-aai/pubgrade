@@ -3,7 +3,7 @@ name: Build and Publish Docker Image
 on:
   push:
     branches:
-      - github_actions  # will be changed to dev, once tested
+      - dev 
 
 jobs:
   build-and-publish:
@@ -23,7 +23,7 @@ jobs:
           dockerfile: .
           image-name: "pubgrade"
           tags: "latest ${{ env.TAG }}"
-          push-branches: "github_actions {{ github.event.repository.default_branch }}$"
+          push-branches: "{{ github.event.repository.default_branch }}$"
         env:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_LOGIN }}
           REGISTRY_TOKEN: "${{ secrets.DOCKERHUB_TOKEN }}"
@@ -36,7 +36,7 @@ jobs:
           dockerfile: build-complete-updater/Dockerfile
           image-name: "pubgrade-updater"
           tags: "latest ${{ env.TAG }}"
-          push-branches: "github_actions {{ github.event.repository.default_branch }}$"
+          push-branches: "{{ github.event.repository.default_branch }}$"
         env:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_LOGIN }}
           REGISTRY_TOKEN: "${{ secrets.DOCKERHUB_TOKEN }}"
