@@ -979,7 +979,7 @@ components:
         name:
           type: string
           description: Image repository and tag used to build image.
-          example: akash7778/pubgrade:0.0.1
+          example: elixircloud/pubgrade
         location:
           type: string
           description: Location of Dockerfile relative to repository root

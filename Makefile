@@ -1,5 +1,5 @@
-IMAGE_NAME_PUBGRADE=akash7778/pubgrade:test_build_1
-IMAGE_NAME_UPDATER=akash7778/pubgrade-updater
+IMAGE_NAME_PUBGRADE=elixircloud/pubgrade
+IMAGE_NAME_UPDATER=elixircloud/pubgrade-updater
 APP_NAME=pubgrade
 
 
